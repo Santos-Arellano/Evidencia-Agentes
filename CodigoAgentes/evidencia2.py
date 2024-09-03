@@ -43,6 +43,10 @@ with onto:
     class Place(Thing):
       pass
 
+    class has_ponderation(DataProperty, FunctionalProperty):
+      domain = [DroneStation]
+      range = [float]
+
     class is_in_place(ObjectProperty):
       domain = [Entity]
       range = [Place]
@@ -100,7 +104,7 @@ class objectAgent(ap.Agent):
 
     def setup(self):
         self.agentType = 3
-        PossibleObjects = ["box", "person", "bottle"]
+        PossibleObjects = ["box", "person", "bottle", "toy"]
         self.object_is = random.choice(PossibleObjects)
 
     def step(self):
@@ -134,6 +138,7 @@ class droneStationAgent(ap.Agent):
 
     def setup(self):
         self.agentType = 4
+        self.ponderation = 0
 
     def step(self):
       pass
@@ -146,6 +151,12 @@ class droneStationAgent(ap.Agent):
 
 class droneAgent(ap.Agent):
 
+  def collectObjects(self, a):
+    seeRange = 5
+    new_objects = [obj for obj in a.neighbors(self, distance = seeRange)
+    if obj.agentType == 3 and obj.object_is not in self.knownObjects and obj not in self.collectedObjects]
+
+    self.collectedObjects.extend(new_objects)
 
   #BDI functions
   def see_stations(self,a):
@@ -157,6 +168,7 @@ class droneAgent(ap.Agent):
 
     for station in self.this_drone.object_within_reach:
       destroy_entity(station.is_in_place[0])
+      #destroy_entity(station.has_ponderation)
       destroy_entity(station)
     destroy_entity(self.this_drone.is_in_place[0])
 
@@ -166,19 +178,20 @@ class droneAgent(ap.Agent):
     for s in p:
       theStation = DroneStation(is_in_place = [Place()])
       theStation.is_in_place[0].at_position = str(self.model.Store.positions[s])
+      theStation.has_ponderation = s.ponderation
       self.this_drone.object_within_reach.append(theStation)
 
 
   def options_stations(self):
-        distances = {}
+        ponderations = {}
 
         for onto_obj in self.this_drone.object_within_reach:
             obj_pos = eval(onto_obj.is_in_place[0].at_position)
             drone_pos = eval(self.this_drone.is_in_place[0].at_position)
-            d = math.sqrt((obj_pos[0] - drone_pos[0]) ** 2 + (obj_pos[1] - drone_pos[1]) ** 2)
-            distances[onto_obj] = d
+            obj_pond = onto_obj.has_ponderation
+            ponderations[onto_obj] = obj_pond
 
-        return distances
+        return ponderations
 
   def filter_stations(self):
       desires = {x: y for x, y in sorted(self.D.items(), key=lambda item: item[1])}
@@ -187,7 +200,7 @@ class droneAgent(ap.Agent):
 
   def plan_patrol(self):
     if self.I is None:
-      return (0,0)
+      return [(0,0)]
 
     thePlanX = []
     thePlanY = []
@@ -248,7 +261,8 @@ class droneAgent(ap.Agent):
       self.firstStep = True
       self.currentPlan = []
       self.messages = []
-      self.knownObjects = ["Box","Bottle"]
+      self.knownObjects = ["box","bottle"]
+      self.collectedObjects = []
 
 
   def step(self):
@@ -260,14 +274,13 @@ class droneAgent(ap.Agent):
 
     self.BDI_patrol(self.see_stations(self.model.Store))
     self.execute()
+    self.collectObjects(self.model.Store)
 
   def update(self):
     pass
 
   def end(self):
     pass
-
-
 
 class StoreModel(ap.Model):
 
@@ -290,29 +303,34 @@ class StoreModel(ap.Model):
         ]
 
         drone_position = [
-            (self.p.storeSize[0] // 2, self.p.storeSize[1] // 2)
+            (self.p.storeSize[0]-1, self.p.storeSize[1]//2)
         ]
 
         droneStation_positions = [
             (self.p.storeSize[0]//2,0),
             (self.p.storeSize[0]//2, self.p.storeSize[1]-1),
             (0, self.p.storeSize[1]//2),
-            (self.p.storeSize[0]-1, self.p.storeSize[1]//2)
+            (self.p.storeSize[0]-1, self.p.storeSize[1]//2),
+            (self.p.storeSize[0]//2, self.p.storeSize[1]//2)
         ]
 
-        while len(self.cameras) > len(camera_positions):
-            self.cameras.remove(random.choice(self.cameras))
+        self._adjust_agent_count(self.cameras, camera_positions)
+        self._adjust_agent_count(self.drone, drone_position)
+        self._adjust_agent_count(self.droneStation, droneStation_positions)
 
-        while len(self.drone) > len(drone_position):
-            self.drone.remove(random.choice(self.drone))
-
-        while len(self.droneStation) > len(droneStation_positions):
-            self.droneStation.remove(random.choice(self.droneStation))
 
         self.Store.add_agents(self.drone, drone_position, empty=True)
         self.Store.add_agents(self.cameras, camera_positions, empty=True)
         self.Store.add_agents(self.droneStation, droneStation_positions, empty=True)
         self.Store.add_agents(self.objects, random=True, empty=True)
+        for station in self.droneStation:
+          station.ponderation += 1
+
+
+
+    def _adjust_agent_count(self, agent_list, positions):
+      while len(agent_list) > len(positions):
+        agent_list.remove(random.choice(agent_list))
 
     def step(self):
         self.objects.step()
@@ -321,6 +339,8 @@ class StoreModel(ap.Model):
         self.drone.step()
 
         for drone in self.drone:
+          for a in drone.collectedObjects:
+            print(f"Objeto {a.id} no reconocido, es:{a.object_is}")
           for station in self.droneStation:
             if station in self.Store.positions and self.Store.positions[station] == self.Store.positions[drone]:
               self.Store.remove_agents(station)
@@ -348,13 +368,13 @@ r = random.random()
 
 #parameters dict
 parameters = {
-    "cameras" : 4,     #Amount of cameras
+    "cameras" : 5,     #Amount of cameras
     "objects" : 10,      #Amount of objects
     "drone" : 1,      #Amount of drones
     "securityGuards" : 1,
     "droneStation" : 4,#Security Guard
 "storeSize" : (15,15),      #Grid size
-    "steps" : 50,          #Max steps
+    "steps" : 70,          #Max steps
     "seed" : 13*r           #seed for random variables (that is random by itself)
 }
 
