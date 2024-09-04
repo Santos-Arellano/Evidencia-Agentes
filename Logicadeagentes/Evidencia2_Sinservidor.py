@@ -16,6 +16,7 @@ import random
 import IPython
 import math
 from constants import positions
+import requests
 
 onto = get_ontology("file://onto.owl")
 
@@ -408,6 +409,7 @@ class droneAgent(ap.Agent):
       self.sent_to_SG = False
       self.objects_to_eliminate = []
       self.killProtocol = False
+      self.process = 0
 
 
   def step(self):
@@ -439,6 +441,7 @@ class droneAgent(ap.Agent):
       self.is_patrol_over = False
       self.killProtocol = False
       self.model.droneStationSetup()
+      self.process += 1
 
     self.execute()
 
@@ -497,6 +500,7 @@ class StoreModel(ap.Model):
 
         self.droneStationSetup()
 
+        self.step_counter = 0  # Initialize step counter for triggering camera captures and drone movements
 
     def _adjust_agent_count(self, agent_list, positions):
       while len(agent_list) > len(positions):
@@ -528,9 +532,35 @@ class StoreModel(ap.Model):
         if len(self.droneStation) == 0:
           for drone in self.drone:
             drone.is_patrol_over = True
+        for drone in self.drone:
+          if drone.process > 0 and drone.is_patrol_over:
+            print("Proceso de patrullaje terminado")
+            self.stop()
+            break
 
+      # Increment step counter
+        self.step_counter += 1
 
+        # Trigger camera capture every N steps or based on certain conditions
+        if self.should_trigger_capture():
+            self.trigger_camera_capture()
 
+    def should_trigger_capture(self):
+        # Example logic: trigger capture every 5 steps
+        if self.step_counter % 5 == 0: 
+            return True
+        return False
+
+    def trigger_camera_capture(self):
+        try:
+            url = 'http://127.0.0.1:5000/trigger_capture'  # Flask URL for triggering camera capture
+            response = requests.post(url, json={'action': 'capture'})
+            if response.status_code == 200:
+                print("Camera capture triggered successfully.")
+            else:
+                print(f"Failed to trigger camera capture: {response.status_code}, {response.text}")
+        except requests.exceptions.RequestException as e:
+            print(f"Error sending request to Flask server: {e}")
 
     def update(self):
         pass
