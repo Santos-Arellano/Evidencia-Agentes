@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 import os
 from constants import positions
 from Evidencia2_Sinservidor import start
+import shutil
 
 app = Flask(__name__)
 
@@ -50,7 +51,27 @@ def upload_drone_image():
     
     return jsonify({'status': 'success', 'message': f'Drone image saved at {save_path}'})
 
+# Route to clear the folders for starting views and drone images
+@app.route('/clear_folders', methods=['POST'])
+def clear_folders():
+    try:
+        # Clear the 'uploads' folder
+        for filename in os.listdir(UPLOAD_FOLDER_startingViews):
+            file_path = os.path.join(UPLOAD_FOLDER_startingViews, filename)
+            os.remove(file_path)
 
+        # Clear the 'droneUploads' folder
+        for filename in os.listdir(UPLOAD_FOLDER_droneViews):
+            file_path = os.path.join(UPLOAD_FOLDER_droneViews, filename)
+            os.remove(file_path)
+
+        return jsonify({'status': 'success', 'message': 'Folders cleared successfully'}), 200
+
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+    
+
+    
 # Route to start the simulation and move objects
 @app.route('/move', methods=['POST'])
 def move_object():
