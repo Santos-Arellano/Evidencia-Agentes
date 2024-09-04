@@ -73,31 +73,46 @@ with onto:
       range = [int]
       pass
 
+class Message:
+  def __init__(self, sender, receiver, content):
+    self.sender = sender
+    self.receiver = receiver
+    self.content = content
+
 class cameraAgent(ap.Agent):
 
-    def see(self, e):
-        seeRange = (self.model.p.storeSize[0]//2)-1
-        Objects = [a for a in e.neighbors(self, distance=seeRange) if a.agentType == 3]
-        objects_info = [{
-            "id": obj.id,
-            "type": obj.object_is,
-            "position": self.model.Store.positions[obj]
-            } for obj in Objects]
+  def sendMessage(self,receiver,content):
+    message = Message(self,receiver,content)
+    receiver.receive_message(message)
 
-        return objects_info
+  def see(self, e):
+      seeRange = self.model.p.storeSize[0]//2
+      new_objects = [a for a in e.neighbors(self, distance = seeRange)
+      if a.agentType == 3 and a.object_is not in self.knownObjects and a not in self.objects_seen]
+      self.objects_seen.extend(new_objects)
 
+  def send_objects_seen(self,drone):
+    content = {"objects_seen": self.objects_seen}
+    self.sendMessage(drone,content)
+    print(f"Enviando objetos vistos al dron: {self.objects_seen}")
 
-    def setup(self):
+  def setup(self):
         self.agentType = 0
+        self.knownObjects = ["box", "bottle"]
+        self.objects_seen = []
+        self.input_sent = False
 
+  def step(self):
+    self.see(self.model.Store)
+    if not self.input_sent:
+      self.input_sent = True
+      for drone in self.model.drone:
+        self.send_objects_seen(drone)
 
-    def step(self):
-      pass
-
-    def update(self):
+  def update(self):
         pass
 
-    def end(self):
+  def end(self):
         pass
 
 class objectAgent(ap.Agent):
@@ -151,6 +166,22 @@ class droneStationAgent(ap.Agent):
 
 class droneAgent(ap.Agent):
 
+
+  def receive_message(self, message):
+    self.message_queue.append(message)
+    print("Mensaje recibido")
+
+  def process_messages(self):
+    while self.message_queue:
+      message = self.message_queue.pop(0)
+      print(f"Procesando mensaje de {message.sender}: {message.content}")
+      if "objects_seen" in message.content:
+        obj_received = message.content["objects_seen"]
+        for obj in obj_received:
+          if obj not in self.collectedObjects:
+            self.collectedObjects.append(obj)
+        print(f"Camara {message.sender} ha detectado {message.content['objects_seen']}")
+
   def collectObjects(self, a):
     seeRange = 5
     new_objects = [obj for obj in a.neighbors(self, distance = seeRange)
@@ -160,7 +191,7 @@ class droneAgent(ap.Agent):
 
   #BDI functions
   def see_stations(self,a):
-    seeRange = 20
+    seeRange = self.model.p.storeSize[0]
     Stations = [a for a in self.model.Store.neighbors(self, distance=seeRange) if a.agentType == 4]
     return Stations
 
@@ -263,18 +294,26 @@ class droneAgent(ap.Agent):
       self.messages = []
       self.knownObjects = ["box","bottle"]
       self.collectedObjects = []
+      self.is_patrol_over = False
+      self.received_input_from_cameras = False
+      self.message_queue = []
 
 
   def step(self):
     if self.firstStep:
       initPos = self.model.Store.positions[self]
+      if not self.received_input_from_cameras:
+        self.process_messages()
+        self.received_input_from_cameras = True
       self.initBeliefs(initPos)
       self.initIntentions()
       self.firstStep = False
 
-    self.BDI_patrol(self.see_stations(self.model.Store))
+    if not self.is_patrol_over:
+      self.BDI_patrol(self.see_stations(self.model.Store))
+      self.collectObjects(self.model.Store)
+
     self.execute()
-    self.collectObjects(self.model.Store)
 
   def update(self):
     pass
@@ -325,6 +364,8 @@ class StoreModel(ap.Model):
         self.Store.add_agents(self.objects, random=True, empty=True)
         for station in self.droneStation:
           station.ponderation += 1
+        for obj in self.objects:
+          print(f"El objeto: {obj.id} es: {obj.object_is}")
 
 
 
@@ -339,13 +380,16 @@ class StoreModel(ap.Model):
         self.drone.step()
 
         for drone in self.drone:
-          for a in drone.collectedObjects:
-            print(f"Objeto {a.id} no reconocido, es:{a.object_is}")
+          print(drone.collectedObjects)
           for station in self.droneStation:
             if station in self.Store.positions and self.Store.positions[station] == self.Store.positions[drone]:
               self.Store.remove_agents(station)
               self.droneStation.remove(station)
               break
+
+        if len(self.droneStation) == 0:
+          for drone in self.drone:
+            drone.is_patrol_over = True
 
 
     def update(self):
