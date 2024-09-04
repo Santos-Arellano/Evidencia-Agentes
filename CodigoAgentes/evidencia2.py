@@ -15,6 +15,7 @@ import itertools
 import random
 import IPython
 import math
+from constants import positions
 
 onto = get_ontology("file://onto.owl")
 
@@ -273,6 +274,15 @@ class droneAgent(ap.Agent):
         self.IntentionSucceded = True
 
       self.model.Store.move_by(self, currentAction)
+
+      current_position = self.model.Store.positions[self]
+        
+        # Append the current position to the global positions list
+      positions.append({
+        "dron(render)": [current_position[0], 5, current_position[1]]
+      })
+
+      print(f"Drone position updated: {positions[-1]}")  # Optional: for debugging purposes
 
 
   def initBeliefs(self,initPos):
