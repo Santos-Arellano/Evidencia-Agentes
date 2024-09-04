@@ -7,8 +7,6 @@ Original file is located at
     https://colab.research.google.com/drive/1FuU-Qf0S1RhOxPx5DoOvj4dPS14FmElc
 """
 
-!pip install agentpy pathfinding owlready2
-
 import agentpy as ap
 import pathfinding as pf
 import matplotlib.pyplot as plt
@@ -429,15 +427,16 @@ parameters = {
 #Create figure (from matplotlib)
 fig, ax = plt.subplots()
 
-#Create model
-model = StoreModel(parameters)
+def start():
+  #Create model
+  model = StoreModel(parameters)
 
 
-#Run with animation
-#If you want to run it without animation then use instead:
-#model.run()
-animation = ap.animate(model, fig, ax, animation_plot)
-#This step may take a while before you can see anything
+  #Run with animation
+  #If you want to run it without animation then use instead:
+  model.run()
+  # animation = ap.animate(model, fig, ax, animation_plot)
+  #This step may take a while before you can see anything
 
-#Print the final animation
-IPython.display.HTML(animation.to_jshtml())
+  # #Print the final animation
+  # IPython.display.HTML(animation.to_jshtml())
