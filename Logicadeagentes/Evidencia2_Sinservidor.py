@@ -7,8 +7,6 @@ Original file is located at
     https://colab.research.google.com/drive/1FuU-Qf0S1RhOxPx5DoOvj4dPS14FmElc
 """
 
-!pip install agentpy pathfinding owlready2
-
 import agentpy as ap
 import pathfinding as pf
 import matplotlib.pyplot as plt
@@ -17,6 +15,7 @@ import itertools
 import random
 import IPython
 import math
+from constants import positions
 
 onto = get_ontology("file://onto.owl")
 
@@ -113,7 +112,7 @@ class objectAgent(ap.Agent):
 
     def setup(self):
         self.agentType = 3
-        PossibleObjects = ["box", "person", "bottle", "toy"]
+        PossibleObjects = ["box", "person", "bottle", "toy"]  
         self.object_is = random.choice(PossibleObjects)
 
     def step(self):
@@ -377,8 +376,14 @@ class droneAgent(ap.Agent):
       else:
         currentAction = (0,0)
         self.IntentionSucceded = True
-
+      
+      current_position = self.model.Store.positions[self]
       self.model.Store.move_by(self, currentAction)
+      positions.append({
+        "dron(render)": [current_position[0], 5, current_position[1]]
+      })
+
+      print(f"Drone position updated: {positions[-1]}")  # Optional: for debugging purposes
 
 
   def initBeliefs(self,initPos):
@@ -560,19 +565,20 @@ parameters = {
 #============================================================================0
 
 #SIMULATION:
-
+def start():
+  
 #Create figure (from matplotlib)
-fig, ax = plt.subplots()
+# fig, ax = plt.subplots()
 
 #Create model
-model = StoreModel(parameters)
+  model = StoreModel(parameters)
 
 
 #Run with animation
 #If you want to run it without animation then use instead:
-#model.run()
-animation = ap.animate(model, fig, ax, animation_plot)
+  model.run()
+# animation = ap.animate(model, fig, ax, animation_plot)
 #This step may take a while before you can see anything
 
 #Print the final animation
-IPython.display.HTML(animation.to_jshtml())
+# IPython.display.HTML(animation.to_jshtml())
