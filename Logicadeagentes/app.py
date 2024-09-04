@@ -1,10 +1,30 @@
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
+import os
 from constants import positions
 from Evidencia2_Sinservidor import start
 
-
 app = Flask(__name__)
 
+# Folder to save uploaded images
+UPLOAD_FOLDER_startingViews = 'uploads'
+if not os.path.exists(UPLOAD_FOLDER_startingViews):
+    os.makedirs(UPLOAD_FOLDER_startingViews)
+
+# Route to receive the image from Unity
+@app.route('/upload_image', methods=['POST'])
+def upload_image():
+    if 'image' not in request.files:
+        return jsonify({'status': 'error', 'message': 'No image file found'}), 400
+    
+    image_file = request.files['image']
+
+    if image_file.filename == '':
+        return jsonify({'status': 'error', 'message': 'No selected file'}), 400
+    
+    save_path = os.path.join(UPLOAD_FOLDER_startingViews, image_file.filename)
+    image_file.save(save_path)
+    
+    return jsonify({'status': 'success', 'message': f'Image saved at {save_path}'})
 
 @app.route('/move', methods=['POST'])
 def move_object():
@@ -28,4 +48,4 @@ def delete_positions():
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000)
+    app.run(host='127.0.0.1', port=5000) 
