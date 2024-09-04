@@ -161,19 +161,20 @@ public class ObjectMover : MonoBehaviour
             #endif
         }
     void UpdateObjectPositions(Dictionary<string, float[]> data)
+{
+    foreach (var item in objects)
     {
-        foreach (var item in objects)
+        if (data.ContainsKey(item.Key))
         {
-            if (data.ContainsKey(item.Key))
-            {
-                Vector3 newPosition = new Vector3(data[item.Key][0], 5, data[item.Key][1]);
-                item.Value.transform.position = newPosition;
-            }
-            else
-            {
-                item.Value.transform.position = new Vector3(100, 0, 0); // Inicia en posición (0, 0, 0)
-
-            }
+            Vector3 newPosition = new Vector3(data[item.Key][0], data[item.Key][1], data[item.Key][2]);
+            item.Value.transform.position = newPosition;
+        }
+        else
+        {
+            Debug.LogWarning($"No data for {item.Key}. Moving to default position.");
+            item.Value.transform.position = new Vector3(100, 0, 0); // Default if no data
         }
     }
+}
+
 }

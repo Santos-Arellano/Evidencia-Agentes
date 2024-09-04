@@ -18,7 +18,7 @@ def get_position():
         return jsonify(positions.pop(0))
     else:
         return jsonify({'status': 'error'}), 404
-
+    
 @app.route('/move', methods=['PUT'])
 def delete_positions():
     global positions
