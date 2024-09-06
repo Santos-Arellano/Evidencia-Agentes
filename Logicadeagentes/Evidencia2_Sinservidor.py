@@ -381,7 +381,7 @@ class droneAgent(ap.Agent):
       current_position = self.model.Store.positions[self]
       self.model.Store.move_by(self, currentAction)
       positions.append({
-        "dron(render)": [current_position[0], 5, current_position[1]]
+        "dron(render)": [current_position[0], 7, current_position[1]]
       })
 
       print(f"Drone position updated: {positions[-1]}")  # Optional: for debugging purposes
@@ -546,8 +546,7 @@ class StoreModel(ap.Model):
             self.trigger_camera_capture()
 
     def should_trigger_capture(self):
-        # Example logic: trigger capture every 5 steps
-        if self.step_counter % 5 == 0: 
+        if self.step_counter % 40 == 0: 
             return True
         return False
 
@@ -587,7 +586,7 @@ parameters = {
     "drone" : 1,      #Amount of drones
     "securityGuards" : 1,
     "droneStation" : 4,#Security Guard
-"storeSize" : (15,15),      #Grid size
+"storeSize" : (25,25),      #Grid size
     "steps" : 200,          #Max steps
     "seed" : 13*r           #seed for random variables (that is random by itself)
 }

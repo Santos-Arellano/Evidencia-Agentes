@@ -1,0 +1,24 @@
+{
+    "id": "chatcmpl-A4HtFP3tWIF9C75Eur2fGrPvKBfSz",
+    "object": "chat.completion",
+    "created": 1725585445,
+    "model": "gpt-3.5-turbo-0125",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "I found multiple objects in the image:\n\n1. not found\n2. found person\n3. not found\n4. found person\n5. not found\n6. not found\n7. not found\n8. not found\n9. not found\n10. not found\n11. not found\n12. not found\n13. found person\n14. not found\n15. not found\n16.",
+                "refusal": null
+            },
+            "logprobs": null,
+            "finish_reason": "length"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 4797,
+        "completion_tokens": 85,
+        "total_tokens": 4882
+    },
+    "system_fingerprint": null
+}

@@ -1,0 +1,24 @@
+{
+    "id": "chatcmpl-A4HyLmme5N64tdUFJSPnXSZgqAB8P",
+    "object": "chat.completion",
+    "created": 1725585761,
+    "model": "gpt-3.5-turbo-0125",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "I found a pumpkin.",
+                "refusal": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 4864,
+        "completion_tokens": 5,
+        "total_tokens": 4869
+    },
+    "system_fingerprint": null
+}

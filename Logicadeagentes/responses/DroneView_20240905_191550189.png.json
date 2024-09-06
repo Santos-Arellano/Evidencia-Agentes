@@ -1,0 +1,24 @@
+{
+    "id": "chatcmpl-A4HsJqD4nQAOHcU8mzwN3e5dYeX10",
+    "object": "chat.completion",
+    "created": 1725585387,
+    "model": "gpt-3.5-turbo-0125",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "I am unable to process this image.",
+                "refusal": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 4864,
+        "completion_tokens": 8,
+        "total_tokens": 4872
+    },
+    "system_fingerprint": null
+}

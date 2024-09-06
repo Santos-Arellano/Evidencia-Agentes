@@ -1,0 +1,24 @@
+{
+    "id": "chatcmpl-A4Htf1PWYiszh18QrZhvWrr6ms7jZ",
+    "object": "chat.completion",
+    "created": 1725585471,
+    "model": "gpt-3.5-turbo-0125",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "I cannot analyze the image provided.",
+                "refusal": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 4773,
+        "completion_tokens": 7,
+        "total_tokens": 4780
+    },
+    "system_fingerprint": null
+}

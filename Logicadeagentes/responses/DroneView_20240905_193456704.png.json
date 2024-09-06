@@ -1,0 +1,24 @@
+{
+    "id": "chatcmpl-A4IAEwi7JDCH5skbae7oKmkRiTlGx",
+    "object": "chat.completion",
+    "created": 1725586498,
+    "model": "gpt-3.5-turbo-0125",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "'not found', 'not found', 'not found', 'not found', 'not found', 'not found'",
+                "refusal": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 4804,
+        "completion_tokens": 24,
+        "total_tokens": 4828
+    },
+    "system_fingerprint": null
+}

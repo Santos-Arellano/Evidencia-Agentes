@@ -1,0 +1,24 @@
+{
+    "id": "chatcmpl-A4HteX1x5DX6cVeTKwlxVxkN3u5bM",
+    "object": "chat.completion",
+    "created": 1725585470,
+    "model": "gpt-3.5-turbo-0125",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "I see a lot of objects in the image. Let me analyze them.",
+                "refusal": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 4819,
+        "completion_tokens": 15,
+        "total_tokens": 4834
+    },
+    "system_fingerprint": null
+}

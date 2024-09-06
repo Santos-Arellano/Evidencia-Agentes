@@ -1,0 +1,24 @@
+{
+    "id": "chatcmpl-A4HhmbajzS2Z4faQCTZ4laBdzgltI",
+    "object": "chat.completion",
+    "created": 1725584734,
+    "model": "gpt-3.5-turbo-0125",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "Object detection results:\n1. found person\n2. not found\n3. found person\n4. found person\n5. found person\n6. not found\n7. not found\n8. not found\n9. not found\n10. not found",
+                "refusal": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 4864,
+        "completion_tokens": 53,
+        "total_tokens": 4917
+    },
+    "system_fingerprint": null
+}
