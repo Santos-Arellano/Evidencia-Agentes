@@ -5,6 +5,7 @@ from Evidencia2_Sinservidor import start
 import shutil
 import subprocess
 
+global counter
 app = Flask(__name__)
 
 # Folder to save uploaded images
@@ -36,6 +37,7 @@ def upload_image():
 # Route to receive the drone image from Unity (drone views)
 @app.route('/upload_drone_image', methods=['POST'])
 def upload_drone_image():
+    
     if 'image' not in request.files:
         return jsonify({'status': 'error', 'message': 'No image file found'}), 400
 
@@ -51,6 +53,7 @@ def upload_drone_image():
         # Save the image
         image_file.save(save_path)
         print(f"Drone image saved at: {save_path}")  # Log the save action
+        counter+=1
     except Exception as e:
         print(f"Error saving the image: {e}")
         return jsonify({'status': 'error', 'message': f"Failed to save the image: {str(e)}"}), 500
