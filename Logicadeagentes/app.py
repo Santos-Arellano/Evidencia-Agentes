@@ -72,14 +72,10 @@ def upload_drone_image():
     except Exception as e:
         print(f"Error starting OpenAI batch processor: {e}")
         return jsonify({'status': 'error', 'message': f"Error starting OpenAI batch processor: {str(e)}"}), 500
-
-
-    except Exception as e:
-        print(f"Error starting OpenAI batch processor: {e}")
-        return jsonify({'status': 'error', 'message': f"Error starting OpenAI batch processor: {str(e)}"}), 500
     
     # Return success response
     return jsonify({'status': 'success', 'message': f'Drone image saved at {save_path}'}), 200
+
 
 
 

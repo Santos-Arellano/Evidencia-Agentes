@@ -1,0 +1,24 @@
+{
+    "id": "chatcmpl-A4JaLlogI1zpY4lmyfr35DvIPAqJ5",
+    "object": "chat.completion",
+    "created": 1725591961,
+    "model": "gpt-3.5-turbo-0125",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "The provided text appears to be a base64 encoded image. Unfortunately, I cannot decode the text to view the image content. If you have a specific question or need assistance with something related to this image, please let me know.",
+                "refusal": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 13639,
+        "completion_tokens": 46,
+        "total_tokens": 13685
+    },
+    "system_fingerprint": null
+}

@@ -1,0 +1,24 @@
+{
+    "id": "chatcmpl-A4JaQsNFEYFy3RNxISaqzB3wARPFq",
+    "object": "chat.completion",
+    "created": 1725591966,
+    "model": "gpt-3.5-turbo-0125",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "The image data appears to be encoded in base64 format, and without decoding it is not possible to determine what the image actually represents. It needs to be decoded from base64 to view the image content. Once the data is decoded, it will show the actual image or graphic that is represented by the encoded data.",
+                "refusal": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 13582,
+        "completion_tokens": 63,
+        "total_tokens": 13645
+    },
+    "system_fingerprint": null
+}

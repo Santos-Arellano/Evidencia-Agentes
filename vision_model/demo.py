@@ -5,6 +5,7 @@ import requests
 import time
 from PIL import Image
 import io
+import random
 
 # Function to compress and encode an image in low-res mode (512x512)
 def compress_and_encode_image_low_res(image_path, quality=70):
@@ -41,10 +42,7 @@ def process_image_low_res(image_path, openai_url, openai_key):
         "messages": [
             {
                 "role": "user",
-                "content": (
-                    "The camera view contains objects. "
-                    "Please return one of the following responses for each object: "
-                    "'found ghost', 'found person', 'found pumpkin' or 'not found'."
+                "content": ("what is in this image?"
                 )
             },
             {
@@ -87,7 +85,29 @@ def process_image_low_res(image_path, openai_url, openai_key):
     except Exception as e:
         print(f"An error occurred while sending the request for {os.path.basename(image_path)}: {e}")
 
-# Function to process images sequentially in low-res mode
+# Function to pick a random image
+def pick_random_image(images_dir):
+    try:
+        # Get the list of all image files in the directory
+        image_files = [f for f in os.listdir(images_dir) if f.endswith(('.jpg', '.jpeg', '.png'))]
+
+        # Check if the directory contains any images
+        if not image_files:
+            print("No images found in the directory.")
+            return None
+
+        # Pick a random image
+        random_image = random.choice(image_files)
+        random_image_path = os.path.join(images_dir, random_image)
+
+        print(f"Randomly selected image: {random_image_path}")
+        return random_image_path
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
+
+# Function to process images sequentially in low-res mode (now picks a random image)
 def process_images_sequentially_low_res(images_dir, openai_url, openai_key):
     if not os.path.exists(images_dir):
         print(f"Error: The directory {images_dir} does not exist.")
@@ -97,22 +117,17 @@ def process_images_sequentially_low_res(images_dir, openai_url, openai_key):
     if not os.path.exists('responses'):
         os.makedirs('responses')
 
-    image_files = [os.path.join(images_dir, f) for f in os.listdir(images_dir) if f.endswith(('.jpg', '.jpeg', '.png'))]
+    # Pick a random image from the folder
+    random_image_path = pick_random_image(images_dir)
 
-    if len(image_files) == 0:
-        print(f"No images found in the directory {images_dir}")
-        return
-
-    print(f"Processing {len(image_files)} images in low-res mode.")
-
-    # Process each image one at a time
-    for image_path in image_files:
-        process_image_low_res(image_path, openai_url, openai_key)
+    if random_image_path:
+        process_image_low_res(random_image_path, openai_url, openai_key)
+    else:
+        print("No image to process.")
 
 if __name__ == "__main__":
-    Adjust these paths and credentials
+    # Adjust these paths and credentials
     images_dir = os.path.abspath('droneUploads')
     openai_url = "https://api.openai.com/v1/chat/completions"
-    # openai_key = 
 
     # process_images_sequentially_low_res(images_dir, openai_url, openai_key)

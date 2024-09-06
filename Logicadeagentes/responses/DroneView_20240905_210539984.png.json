@@ -1,0 +1,24 @@
+{
+    "id": "chatcmpl-A4JaHxljqatcQ8JdrGT3Ekn6jZNwb",
+    "object": "chat.completion",
+    "created": 1725591957,
+    "model": "gpt-3.5-turbo-0125",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "This appears to be a base64 encoded image file in JPEG format. Unfortunately, I'm unable to decode the image directly from the text provided. You would need a program or online tool to decode the base64 and display the image.",
+                "refusal": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 14240,
+        "completion_tokens": 47,
+        "total_tokens": 14287
+    },
+    "system_fingerprint": null
+}

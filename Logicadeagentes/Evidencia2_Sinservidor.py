@@ -487,7 +487,7 @@ class StoreModel(ap.Model):
         ]
 
         drone_position = [
-            (self.p.storeSize[0]-1, self.p.storeSize[1]//2)
+            (self.p.storeSize[0]//2, self.p.storeSize[1]//2)
         ]
 
         self._adjust_agent_count(self.cameras, camera_positions)

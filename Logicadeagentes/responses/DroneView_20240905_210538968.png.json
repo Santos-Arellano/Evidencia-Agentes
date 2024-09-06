@@ -1,0 +1,24 @@
+{
+    "id": "chatcmpl-A4Ja4mqf4oemNhSZnUdZ4A67hnHBe",
+    "object": "chat.completion",
+    "created": 1725591944,
+    "model": "gpt-3.5-turbo-0125",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "It seems that the provided text is in Base64 format which can be decoded to show the actual image content. Let me decode it for you.",
+                "refusal": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 14220,
+        "completion_tokens": 29,
+        "total_tokens": 14249
+    },
+    "system_fingerprint": null
+}
